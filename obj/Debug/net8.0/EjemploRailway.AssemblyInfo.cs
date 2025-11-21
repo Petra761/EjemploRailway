@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EjemploRailway")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0582034ed269806f1a41cc512edf06d5c0aca8c4")]
 [assembly: System.Reflection.AssemblyProductAttribute("EjemploRailway")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EjemploRailway")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
