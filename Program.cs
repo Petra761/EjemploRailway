@@ -1,38 +1,41 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+
 var url = Environment.GetEnvironmentVariable("DATABASE_URL");
-Console.WriteLine("estamos conectado en" + url);
+Console.WriteLine("estamos conectado en " + url);
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<RailwayContext>(options => options.UseNpgsql(url));
 
-// Add services to the container.
-builder.WebHost.UseUrls("http://0.0.0.0:8080"); // Configurar la aplicaci�n para escuchar en el puerto 8080
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-
-var app = builder.Build();
-
+// 1) REGISTRAR SERVICIOS ANTES DE Build
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
 });
 
-// Configure the HTTP request pipeline.
+builder.Services.AddDbContext<RailwayContext>(options =>
+    options.UseNpgsql(url)); // asegúrate de tener el paquete Npgsql EF Core
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
+// Opcional: configurar URL del host (útil en Railway/containers)
+builder.WebHost.UseUrls("http://0.0.0.0:8080");
+
+// 2) Build
+var app = builder.Build();
+
+// 3) Migraciones / inicialización DB (con scope del app ya creado)
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<RailwayContext>();
     db.Database.Migrate();
 }
 
+// 4) Middlewares — UseCors debe ir aquí (después de Build)
 app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
