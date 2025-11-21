@@ -15,6 +15,17 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 // Configure the HTTP request pipeline.
 using (var scope = app.Services.CreateScope())
 {
@@ -22,6 +33,7 @@ using (var scope = app.Services.CreateScope())
     db.Database.Migrate();
 }
 
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
